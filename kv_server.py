@@ -73,7 +73,10 @@ while True:
             data = 'Please enter again!'
             tcpCliSock.send(data.encode('utf-8'))
 
-    del dict['x']
+    if 'x' in dict:
+        del dict['x']
+    else:
+        pass
     tcpCliSock.close()
 
 tcpSerSock.close()
