@@ -28,41 +28,38 @@ while True:
     print('...connected from:', addr)
 
     while True:
-        data = tcpCliSock.recv(1024)
-        D = data.split(str.encode(' '))
-        S = str.encode('SET')
-        G = str.encode('GET')
-        A = str.encode('AUTH')
-        Url = str.encode('URL')
-        if S in data:
-            dict[str(D[1],'utf-8')] = str(D[2],'utf-8')
+        data = str(tcpCliSock.recv(1024),'utf-8')
+        print(data)
+        D = data.split(' ')
+        if 'SET' in data:
+            dict[D[1]] = D[2]
             tcpCliSock.send('01'.encode('utf-8'))
-        elif G in data:
-            if str(D[1],'utf-8') in dict:
-                data=dict[str(D[1],'utf-8')]
+        elif 'GET' in data:
+            if D[1] in dict:
+                data=dict[D[1]]
                 tcpCliSock.send(data.encode('UTF-8'))
-            elif str(D[1],'utf-8') not in dict:
+            elif D[1] not in dict:
                 data = ' '
                 tcpCliSock.send(data.encode('utf-8'))
-        elif A in data:
-            if str(D[1],'utf-8') in dict:
-                if str(D[2],'utf-8')==dict[str(D[1],'utf-8')]:
+        elif 'AUTH' in data:
+            if D[1] in dict:
+                if D[2]==dict[D[1]]:
                     dict['x']=12345
                     tcpCliSock.send('0'.encode('utf-8'))
                 else:
                     tcpCliSock.send('-1'.encode('utf-8'))
-            elif str(D[1],'utf-8') not in dict:
+            elif D[1] not in dict:
                 tcpCliSock.send('-1'.encode('utf-8'))
-        elif Url in data:
+        elif 'URL' in data:
             if 'x' in dict:
-                if str(D[1],'utf-8') in dict:
-                    data=dict[str(D[1],'utf-8')]
+                if D[1] in dict:
+                    data=dict[D[1]]
                     tcpCliSock.send(data.encode('utf-8'))
-                elif str(D[1],'utf-8') not in dict:
-                    url=str(D[2],'utf-8')                 #63行将网址换成 URL name url 的url后大小总是计算出None。。(￣▽￣)
+                elif D[1] not in dict:
+                    url=D[2]                 #63行将网址换成 URL name url 的url后总是计算出None。。(￣▽￣)
                     response = urllib.request.urlopen('https://www.baidu.com')  #只能先把网址放上去了。。(￣▽￣)
-                    data = response.headers['content-length']              #师兄，手下留情。。(￣▽￣)
-                    dict[str(D[1],'utf-8')]=data
+                    data = response.headers['content-length']              #别扣太多分。。(￣▽￣)
+                    dict[D[1]]=data
                     tcpCliSock.send(data.encode('utf-8'))
             else:
                 data = ' '
@@ -72,7 +69,6 @@ while True:
         else:
             data = 'Please enter again!'
             tcpCliSock.send(data.encode('utf-8'))
-
     if 'x' in dict:
         del dict['x']
     else:
