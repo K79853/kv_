@@ -3,6 +3,8 @@ import argparse
 import configparser
 import urllib.request
 
+#多线程不会搞，测试的时候一直循环，不用任务管理器还关不掉。。电脑撑不住，不敢试了。。这个可以客户端一个接一个排队等，将就一下了(￣▽￣)
+
 parser = argparse.ArgumentParser()  #运行方式
 parser.add_argument('--host', default='127.0.0.1')
 parser.add_argument('--port', type=int, default=5678)
